@@ -1,66 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) and configured for Cloudflare Pages deployment.
+# Crypto Receipt Generator
+
+A full-featured web application that generates professional, verifiable proof-of-payment receipts for blockchain transactions.
+
+## Features
+
+### Core Functionality
+- **Multi-Chain Support**: Ethereum, BNB Chain, Polygon, Solana, and Bitcoin
+- **Blockchain Verification**: All data fetched directly from blockchain using free public RPC endpoints
+- **Professional Receipts**: Clean, branded receipts with all transaction details
+- **PDF Export**: Download receipts as professional PDF documents
+- **Shareable Links**: Generate unique URLs for each receipt
+- **QR Codes**: Embedded QR codes linking to blockchain explorers
+
+### User Features
+- **Authentication**: Sign up/login system to save receipts
+- **Receipt History**: View all previously generated receipts
+- **Custom Branding**: Add business name and logo to receipts
+- **Settings Page**: Manage branding preferences
+
+## Tech Stack
+
+- **Frontend**: Next.js 15 (React 19) with TypeScript
+- **Styling**: Tailwind CSS 4
+- **PDF Generation**: jsPDF
+- **QR Codes**: qrcode library
+- **Authentication**: JWT with bcryptjs
+- **Database**: In-memory storage (easily replaceable with PostgreSQL/Prisma)
+- **Blockchain APIs**: Free public RPC endpoints
 
 ## Getting Started
 
-First, run the development server:
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+```
+
+### Development
+
+```bash
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app will be available at `http://localhost:8000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Webview & CORS Configuration
-
-This template is configured with **universal CORS and iframe embedding** for maximum compatibility:
-
-### 🌐 Simple Universal Access
-- **All Routes & Assets**: Wildcard CORS allowing any origin, method, and headers
-- **No File Type Restrictions**: Works with any file format your project uses
-- **Iframe Ready**: `Content-Security-Policy: frame-ancestors *` allows embedding in any iframe
-- **Webview Ready**: Configured for embedding in any container or webview
-- **Development Friendly**: Works across any port, domain, or subdomain
-
-### 🚀 Works Everywhere
-- Any localhost port (`localhost:3000`, `localhost:8080`, etc.)
-- Any subdomain pattern (`*.localhost`, `*.nullshot.dev`, etc.)
-- Webview containers (Electron, VSCode, browser iframes)
-- Cross-origin development scenarios
-- CDN and edge deployments
-
-### Environment Variables
-
-Create a `.env.local` file for local development:
+### Build
 
 ```bash
-# Next.js Environment (for Cloudflare deployment)
-NEXTJS_ENV=development
-
-# Optional: Override CORS settings if needed
-# CORS_ALLOWED_ORIGINS=http://localhost:3000,https://yourdomain.com
+pnpm build
 ```
 
-## Learn More
+### Deploy
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm deploy
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── auth/
+│   │   │   ├── login/route.ts
+│   │   │   └── signup/route.ts
+│   │   ├── receipts/
+│   │   │   ├── [id]/
+│   │   │   │   ├── route.ts
+│   │   │   │   └── pdf/route.ts
+│   │   │   ├── generate/route.ts
+│   │   │   └── my-receipts/route.ts
+│   │   └── user/
+│   │       └── settings/route.ts
+│   ├── login/page.tsx
+│   ├── signup/page.tsx
+│   ├── receipt/[id]/page.tsx
+│   ├── my-receipts/page.tsx
+│   ├── settings/page.tsx
+│   ├── page.tsx
+│   ├── layout.tsx
+│   └── globals.css
+└── lib/
+    ├── auth.ts          # JWT authentication
+    ├── blockchain.ts    # Blockchain API integration
+    ├── db.ts           # In-memory database
+    └── pdf.ts          # PDF generation
+```
 
-## Deploy on Vercel
+## API Endpoints
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Authentication
+- `POST /api/auth/signup` - Create new user account
+- `POST /api/auth/login` - Login and get JWT token
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Receipts
+- `POST /api/receipts/generate` - Generate receipt from transaction hash
+- `GET /api/receipts/[id]` - Get receipt by ID
+- `GET /api/receipts/[id]/pdf` - Download receipt as PDF
+- `GET /api/receipts/my-receipts` - Get all user's receipts
+
+### User Settings
+- `GET /api/user/settings` - Get user settings
+- `PUT /api/user/settings` - Update business name and logo
+
+## Blockchain Integration
+
+The app uses free public RPC endpoints for each blockchain:
+
+- **Ethereum**: eth.llamarpc.com
+- **BNB Chain**: bsc-dataseed.binance.org
+- **Polygon**: polygon-rpc.com
+- **Solana**: api.mainnet-beta.solana.com
+- **Bitcoin**: blockchain.info API
+
+## Usage
+
+1. **Sign Up**: Create an account to save receipts
+2. **Generate Receipt**: 
+   - Select blockchain network
+   - Paste transaction hash
+   - Click "Generate Receipt"
+3. **View Receipt**: See all transaction details with verification badge
+4. **Download PDF**: Export receipt as professional PDF
+5. **Share**: Copy shareable link to send to others
+6. **Customize**: Add business name and logo in settings
+
+## Future Enhancements
+
+- PostgreSQL database integration
+- File upload for logos
+- USD price conversion API integration
+- Email receipt delivery
+- API key for automated receipt generation
+- Advanced analytics dashboard
+- Multi-language support
+- Custom receipt templates
+
+## Environment Variables
+
+```env
+JWT_SECRET=your-secret-key-here
+```
+
+## License
+
+MIT
+
